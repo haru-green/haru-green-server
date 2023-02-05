@@ -2,8 +2,11 @@ package harugreen.harugreenserver.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import lombok.Getter;
 
 @Entity
@@ -15,7 +18,13 @@ public class Quiz {
     @Column(name = "quiz_id")
     private Integer id;
 
-    private String title;
-    private String content;
-    private boolean ox;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
+    private String title; //퀴즈 내용
+    private String commentary; //퀴즈 해설
+    private Boolean ox; //이 퀴즈의 정답이 O인지 X인지
+    private Integer level; //퀴즈의 레벨
+    private Boolean isSolved; //퀴즈가 풀렸는지 여부
 }

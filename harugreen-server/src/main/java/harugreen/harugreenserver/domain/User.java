@@ -1,5 +1,6 @@
 package harugreen.harugreenserver.domain;
 
+import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -17,7 +18,16 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
-    private String nickname;
-    private Integer level;
+    @OneToMany(mappedBy = "user")
+    private List<Quiz> quizList = new ArrayList<>(); //유저가 푼 퀴즈 리스트
 
+    private String nickname; //유저 이름 (카카오 닉네임으로 할 에정)
+    private Integer level; //유저의 레벨
+
+    public User(String nickname, Integer level) {
+        this.nickname = nickname;
+        this.level = level;
+    }
+
+    protected User() {}
 }
