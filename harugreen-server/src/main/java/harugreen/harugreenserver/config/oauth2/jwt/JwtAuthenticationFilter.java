@@ -1,6 +1,13 @@
 package harugreen.harugreenserver.config.oauth2.jwt;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
@@ -26,8 +33,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
             throws IOException, ServletException {
 
         //request header 에서 토큰 추출
+        HttpServletRequest req = (HttpServletRequest) request;
+        log.info("jwt authentication access token={}", req.getAttribute("X-jwt-access"));
+        log.info("jwt authentication requestUri={}", req.getRequestURI());
         String token = resolveToken((HttpServletRequest) request);
-        log.info("doFilter token={}, req uri={}", token, ((HttpServletRequest) request).getRequestURI());
+        log.info("jwt authentication doFilter token={}, req uri={}", token, ((HttpServletRequest) request).getRequestURI());
 
         //토큰 유효성 검사
         if (token != null && jwtTokenProvider.validateToken(token)) {
@@ -41,7 +51,11 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     //request header 에서 토큰 추출
     private String resolveToken(HttpServletRequest request) {
-        String bearerToken = request.getHeader("Authorization");
+        log.info("jwt request header");
+        String bearerToken = request.getHeader("X-jwt-grant");
+        log.info("bearerToken={}", bearerToken);
+        log.info("Cookie={}", request.getHeader("Cookie"));
+
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer")) {
             return bearerToken.substring(7);
         }

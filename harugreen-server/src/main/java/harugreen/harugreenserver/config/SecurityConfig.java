@@ -23,7 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Slf4j
 @Configuration
 @RequiredArgsConstructor
-//@EnableWebSecurity(debug = true)
+@EnableWebSecurity
 public class SecurityConfig {
 
     private final CustomOAuth2UserService customOAuth2UserService;
@@ -50,13 +50,14 @@ public class SecurityConfig {
                 .formLogin().disable() //spring security 에서 기본적으로 제공하는 로그인 폼 안씀
                 .httpBasic().disable()
                 .authorizeRequests()
-                .antMatchers("/oauth/**", "/login/**").permitAll()
-                .anyRequest().authenticated() //위의 uri 빼고는 인증을 거쳐야 함.
+                .antMatchers("/oauth/**").permitAll()
+                //.anyRequest().authenticated() //위의 uri 빼고는 인증을 거쳐야 함.
                 .and()
                 .oauth2Login()
                 .authorizationEndpoint().baseUri("/oauth/authorize/**")
                 .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository())
                 .and()
+                .defaultSuccessUrl("/login/oauth/**").successHandler(successHandler)
                 .redirectionEndpoint().baseUri("/login/oauth/**")
                 .and()
                 .userInfoEndpoint().userService(customOAuth2UserService) //OAuth2 로그인 성공 시, 후 작업을 넘긴다.

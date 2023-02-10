@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
@@ -30,6 +32,11 @@ public class User {
     private Integer level; //유저의 레벨
     private String email; //유저의 이메일 (중복 검사용)
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    private String refreshToken;
+
     @Builder
     public User(Long id, String nickname, String email, Integer level) {
         this.id = id;
@@ -42,5 +49,13 @@ public class User {
         this.nickname = nickname;
         this.email = email;
         return this;
+    }
+
+    public void updateRefreshToken(String refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
+    public void authorizedUser() {
+        this.role = Role.USER;
     }
 }

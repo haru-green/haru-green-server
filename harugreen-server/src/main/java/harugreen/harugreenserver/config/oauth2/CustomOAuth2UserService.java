@@ -29,7 +29,7 @@ public class CustomOAuth2UserService implements OAuth2UserService<OAuth2UserRequ
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        log.info("===============OAuth2 로그인 관련 후처리 작업 시작==================");
+        log.info("CustomOauth2UserService.loadUser() 실행. OAuth2 로그인 요청 후처리 ");
 
         OAuth2UserService<OAuth2UserRequest, OAuth2User> delegate = new DefaultOAuth2UserService();
         OAuth2User oAuth2User = delegate.loadUser(userRequest); //OAuth2 서비스(카카오 등)에서 가져온 유저 정보를 담고 있다.

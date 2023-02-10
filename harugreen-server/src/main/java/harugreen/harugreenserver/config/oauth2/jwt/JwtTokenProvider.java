@@ -22,16 +22,16 @@ import java.util.stream.Collectors;
 public class JwtTokenProvider {
 
     private final Key key;
+    private static final String EMAIL_CLAIM = "email";
+    private static final String BEARER = "Bearer ";
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
-        log.info("jwt token provide");
         byte[] secretByteKey = DatatypeConverter.parseBase64Binary(secretKey);
         this.key = Keys.hmacShaKeyFor(secretByteKey);
     }
 
     //유저 정보를 가지고 token을 생성
     public JwtToken generateToken(Authentication authentication) {
-        log.info("jwt token provide");
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));

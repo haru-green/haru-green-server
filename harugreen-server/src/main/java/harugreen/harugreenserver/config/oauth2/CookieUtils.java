@@ -12,15 +12,11 @@ import org.springframework.util.SerializationUtils;
 public class CookieUtils {
 
     public static Optional<Cookie> getCookie(HttpServletRequest request, String name) {
-
         Cookie[] cookies = request.getCookies();
 
         if(cookies != null) {
             for (Cookie cookie : cookies) {
-                log.info("cookie={}, name={}", cookie.getName(), name);
-                log.info("cookie value={}", cookie.getValue());
                 if(cookie.getName().equals(name)) {
-                    log.info("cookie match");
                     return Optional.of(cookie);
                 }
             }
