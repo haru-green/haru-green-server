@@ -41,27 +41,18 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         String targetUrl = determineTargetUrl(request, response, authentication);
 
-
         JwtToken token = tokenProvider.generateToken(authentication);
         log.info("token={}", token);
 
         log.info("requestUri={}", request.getRequestURI());
-        log.info("targetUrl={}", targetUrl);
 
         clearAuthenticationAttributes(request, response);
 
-        //TODO: 현재 request=/login/oauth/kakao, targetUri=/oauth/token
-        //TODO: response 에 cookie, jwt 값 추가해서 targetUri 로 리다이렉트 시키는데, 자꾸 카카오 로그인 창 response header 에 값이 추가됨.
-        response.addCookie(
-                CookieUtils.getCookie(request, OAUTH2_AUTHORIZATION_REQUEST_COOKIE_NAME).orElse(new Cookie("cookie", "null")));
-
-        response.setHeader("X-jwt-access", token.getAccessToken());
-        response.setHeader("X-jwt-refresh", token.getRefreshToken());
-        response.setHeader("X-jwt-grant", token.getGrantType());
-
-        request.setAttribute("X-jwt-access", token.getAccessToken());
-
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
+//        response.addHeader("X-jwt-access", token.getAccessToken());
+//        response.addHeader("X-jwt-refresh", token.getRefreshToken());
+//        response.addHeader("X-jwt-grant", token.getGrantType());
+
         log.info("sendRedirect={}", targetUrl);
     }
 
@@ -78,7 +69,9 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
         JwtToken token = tokenProvider.generateToken(authentication);
 
         return UriComponentsBuilder.fromUriString(targetUrl)
-                //.queryParam("token", token)
+                .queryParam("accessToken", token.getAccessToken())
+                .queryParam("refreshToken", token.getRefreshToken())
+                .queryParam("grant", token.getGrantType())
                 .build().toUriString();
     }
 
