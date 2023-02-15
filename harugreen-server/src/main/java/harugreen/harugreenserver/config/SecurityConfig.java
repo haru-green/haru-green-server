@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -54,11 +55,10 @@ public class SecurityConfig {
                 //.anyRequest().authenticated() //위의 uri 빼고는 인증을 거쳐야 함.
                 .and()
                 .oauth2Login()
-                .authorizationEndpoint().baseUri("/oauth/authorize/**")
+                .authorizationEndpoint().baseUri("/oauth/authorize/**") //인가 코드를 요청하는 엔드포인트.
                 .authorizationRequestRepository(cookieOAuth2AuthorizationRequestRepository())
                 .and()
-                .defaultSuccessUrl("/login/oauth/**").successHandler(successHandler)
-                .redirectionEndpoint().baseUri("/login/oauth/**")
+                .redirectionEndpoint().baseUri("/oauth/login/**")
                 .and()
                 .userInfoEndpoint().userService(customOAuth2UserService) //OAuth2 로그인 성공 시, 후 작업을 넘긴다.
                 .and()

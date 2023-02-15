@@ -2,26 +2,18 @@ package harugreen.harugreenserver.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import lombok.Getter;
 import lombok.Setter;
 
 @Entity
 @Getter
 @Setter
-public class Quiz {
+public class QuizInfo {
 
     @Id
     @Column(name = "quiz_id")
     private Integer id;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email")
-    private User user;
 
     private String title; //퀴즈 내용
     private String commentary; //퀴즈 해설

@@ -5,13 +5,17 @@ import static harugreen.harugreenserver.config.oauth2.HttpCookieOAuth2Authorizat
 
 import harugreen.harugreenserver.config.oauth2.jwt.JwtToken;
 import harugreen.harugreenserver.config.oauth2.jwt.JwtTokenProvider;
+import harugreen.harugreenserver.domain.User;
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Enumeration;
 import java.util.Optional;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Cookie;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -20,17 +24,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
+@RequiredArgsConstructor
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     private final JwtTokenProvider tokenProvider;
     private final HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository;
-
-    public OAuth2AuthenticationSuccessHandler(JwtTokenProvider tokenProvider,
-            HttpCookieOAuth2AuthorizationRequestRepository httpCookieOAuth2AuthorizationRequestRepository) {
-        this.tokenProvider = tokenProvider;
-        this.httpCookieOAuth2AuthorizationRequestRepository = httpCookieOAuth2AuthorizationRequestRepository;
-    }
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication)
@@ -43,15 +42,16 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         JwtToken token = tokenProvider.generateToken(authentication);
         log.info("token={}", token);
-
+        log.info("user email={}", authentication.getName());
         log.info("requestUri={}", request.getRequestURI());
 
-        clearAuthenticationAttributes(request, response);
-
-        getRedirectStrategy().sendRedirect(request, response, targetUrl);
 //        response.addHeader("X-jwt-access", token.getAccessToken());
 //        response.addHeader("X-jwt-refresh", token.getRefreshToken());
 //        response.addHeader("X-jwt-grant", token.getGrantType());
+
+
+        clearAuthenticationAttributes(request, response);
+        getRedirectStrategy().sendRedirect(request, response, targetUrl);
 
         log.info("sendRedirect={}", targetUrl);
     }
@@ -70,7 +70,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
         return UriComponentsBuilder.fromUriString(targetUrl)
                 .queryParam("accessToken", token.getAccessToken())
-                .queryParam("refreshToken", token.getRefreshToken())
+                //.queryParam("refreshToken", token.getRefreshToken())
                 .queryParam("grant", token.getGrantType())
                 .build().toUriString();
     }
