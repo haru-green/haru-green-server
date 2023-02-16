@@ -10,6 +10,7 @@ import org.springframework.boot.autoconfigure.security.oauth2.client.servlet.OAu
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -36,6 +37,14 @@ public class UserController {
             return null;
         }
         return userService.getUserByEmail(email);
+    }
+
+    @PostMapping("/levelup/{email}")
+    public UserResponseDto levelUp(@PathVariable String email) {
+        if(!userService.isExistUserByEmail(email)) {
+            return null;
+        }
+        return userService.levelUp(email);
     }
 
 }
