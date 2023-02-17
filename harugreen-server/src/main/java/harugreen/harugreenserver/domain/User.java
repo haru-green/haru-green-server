@@ -2,8 +2,6 @@ package harugreen.harugreenserver.domain;
 
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import lombok.Builder;
@@ -25,16 +23,15 @@ public class User {
 //    @Builder.Default
 //    private List<Quiz> quizList = new ArrayList<>(); //유저가 푼 퀴즈 리스트
 
-    @Enumerated(EnumType.STRING)
-    private Role role;
     private String refreshToken;
     private LocalDateTime answerTime; //문제 푼 시간. (하루에 문제 2번 못품)
 
     @Builder
-    public User(String nickname, Integer level, String email) {
+    public User(String nickname, Integer level, String email, String refreshToken) {
         this.nickname = nickname;
         this.level = level;
         this.email = email;
+        this.refreshToken = refreshToken;
     }
 
     public User() {}
@@ -47,9 +44,5 @@ public class User {
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
-    }
-
-    public void authorizedUser() {
-        this.role = Role.USER;
     }
 }

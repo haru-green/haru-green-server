@@ -1,10 +1,18 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
-<h1>Hello Spring Boot</h1>
+<h1>인가 코드 받아오기 성공.</h1>
+<a href="#" id="link">access token 요청해서 사용자 정보 받아오기</a>
 </body>
+<script>
+    const param = new URLSearchParams(window.location.search);
+    const code = param.get('code');
+
+    const link = document.getElementById('link');
+    link.href = `http://localhost:8080/user/login?code=${code}`;
+</script>
 </html>
