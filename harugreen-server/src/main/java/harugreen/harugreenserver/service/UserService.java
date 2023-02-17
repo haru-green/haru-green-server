@@ -31,6 +31,16 @@ public class UserService {
         return mapper.map(user, UserResponseDto.class);
     }
 
+    public UserResponseDto levelUp(String email) {
+        User user = userRepository.findByEmail(email).get();
+        Integer level = user.getLevel();
+        if(level < 8) {
+            user.setLevel(level + 1);
+        }
+        return mapper.map(user, UserResponseDto.class);
+    }
+
+
 
 
     public boolean checkDuplicateUser(String email) {

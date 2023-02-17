@@ -1,8 +1,6 @@
 package harugreen.harugreenserver.domain;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.persistence.Column;
+import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -23,14 +21,14 @@ public class User {
     @Id
     private String email; //유저의 이메일 (중복 검사용)
 
-    @OneToMany(mappedBy = "user")
-    @Builder.Default
-    private List<Quiz> quizList = new ArrayList<>(); //유저가 푼 퀴즈 리스트
+//    @OneToMany(mappedBy = "user")
+//    @Builder.Default
+//    private List<Quiz> quizList = new ArrayList<>(); //유저가 푼 퀴즈 리스트
 
     @Enumerated(EnumType.STRING)
     private Role role;
-
     private String refreshToken;
+    private LocalDateTime answerTime; //문제 푼 시간. (하루에 문제 2번 못품)
 
     @Builder
     public User(String nickname, Integer level, String email) {

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,20 +23,17 @@ public class AuthController {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    /**
+     *
+     * @param accessToken jwt accessToken
+     * @param refreshToken jwt refreshToken
+     * @param grant jwt grantType
+     * @return access, refresh, grant 를 담은 JwtResponseDto
+     */
     @GetMapping("/token")
-    public String token(HttpServletRequest request, HttpServletResponse response) {
+    public String getToken(@RequestParam String accessToken, @RequestParam String refreshToken, @RequestParam String grant) {
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                log.info(cookie.toString());
-            }
-        } else {
-            log.info("/oauth/token cookie null");
-        }
-
-        String header = response.getHeader("X-jwt-access");
-        log.info("header={}", header);
 
         return "hello";
     }
