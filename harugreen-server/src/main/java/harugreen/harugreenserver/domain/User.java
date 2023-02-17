@@ -24,7 +24,7 @@ public class User {
 //    private List<Quiz> quizList = new ArrayList<>(); //유저가 푼 퀴즈 리스트
 
     private String refreshToken;
-    private LocalDateTime answerTime; //문제 푼 시간. (하루에 문제 2번 못품)
+    private LocalDateTime answerTime; //문제 푼 시간. (하루에 문제 2번 못품) LocalDateTime.now()를 저장하면 됨.
 
     @Builder
     public User(String nickname, Integer level, String email, String refreshToken) {

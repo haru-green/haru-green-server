@@ -15,6 +15,4 @@ public class UserResponseDto {
     private Integer level;
     private String email;
     private String refreshToken;
-
-
 }

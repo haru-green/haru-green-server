@@ -7,6 +7,7 @@ import harugreen.harugreenserver.dto.user.JwtResponseDto;
 import harugreen.harugreenserver.dto.user.UserCreateDto;
 import harugreen.harugreenserver.dto.user.UserResponseDto;
 import harugreen.harugreenserver.repository.UserRepository;
+import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -21,7 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
-    private ModelMapper mapper = new ModelMapper();
+    private final ModelMapper mapper = new ModelMapper();
 
     public boolean isExistUserByEmail(String email) {
         return userRepository.existsUserByEmail(email);
@@ -36,7 +37,7 @@ public class UserService {
     public UserResponseDto levelUp(String email) {
         User user = userRepository.findByEmail(email).get();
         Integer level = user.getLevel();
-        if(level < 8) {
+        if (level < 8) {
             user.setLevel(level + 1);
         }
         return mapper.map(user, UserResponseDto.class);
@@ -51,6 +52,24 @@ public class UserService {
         return mapper.map(userRepository.save(newUser), UserResponseDto.class);
     }
 
+    /**
+     * jwt 검증로직. /user/login 을 제외한 모든 API에 적용.
+     */
+    public String validateJwt(HttpServletRequest request) {
+        String token = jwtProvider.resolveAccessToken(request);
+        if (token == null) {
+            log.info("JWT ACCESS TOKEN INVALID (NOT FOUND)");
+            return "NOT_FOUND";
+        }
+
+        if(!jwtProvider.validateAccessToken(token)) {
+            log.info("JWT ACCESS TOKEN EXPIRED (재발급 필요)");
+            return "EXPIRED";
+        }
+
+        log.info("JWT ACCESS TOKEN VALIDATE");
+        return "VALIDATE";
+    }
 
     public boolean checkDuplicateUser(String email) {
         return userRepository.existsUserByEmail(email);

@@ -30,11 +30,11 @@ public class KakaoOAuthService {
 
         MultiValueMap<String, String> params = kakaoAccessTokenRequest.withCode(code);
 
-        for (List<String> value : params.values()) {
-            for (String s : value) {
-                log.info("param value={}", s);
-            }
-        }
+//        for (List<String> value : params.values()) {
+//            for (String s : value) {
+//                log.info("param value={}", s);
+//            }
+//        }
 
         RestTemplate rt = new RestTemplate();
         HttpEntity<MultiValueMap<String, String>> accessTokenRequest = new HttpEntity<>(params, headers);

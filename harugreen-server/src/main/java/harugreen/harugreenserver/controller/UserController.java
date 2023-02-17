@@ -9,10 +9,10 @@ import harugreen.harugreenserver.dto.user.UserCreateDto;
 import harugreen.harugreenserver.dto.user.UserResponseDto;
 import harugreen.harugreenserver.repository.UserRepository;
 import harugreen.harugreenserver.service.UserService;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,8 +30,11 @@ public class UserController {
     private final UserRepository userRepository;
     private final KakaoOAuthService kakaoOAuthService;
 
+    /**
+     * 첫 로그인 시도 또는 검증 로직에 실패해 재로그인이 필요한 경우에만 호출.
+     */
     @GetMapping("/login")
-    public UserResponseDto login(@RequestParam String code, HttpServletResponse response) {
+    public UserResponseDto login(@RequestParam String code, HttpServletRequest request, HttpServletResponse response) {
         log.info("USER LOGIN 실행. 인가 코드={}", code);
         KakaoAccessTokenResponse accessToken = kakaoOAuthService.getAccessToken(code);
         UserInfoResponse userInfo = kakaoOAuthService.getUserInfo(accessToken.getAccessToken());
@@ -45,6 +48,19 @@ public class UserController {
         if (userService.isExistUserByEmail(profile.getEmail())) {
             //TODO: 가입된 유저인데 /user/login 에 진입했다 -> 토큰 만료
             //TODO: jwt 재발급 필수
+            String tokenState = userService.validateJwt(request);
+            if (tokenState.equals("NOT_FOUND")) {
+                log.info("허용되지 않은 접근. 첫 창으로 리다이렉트.");
+
+            } else if (tokenState.equals("EXPIRED")) {
+                log.info("재로그인. ACCESS TOKEN 재발급 필요.");
+            }
+
+            JwtToken token = userService.generateToken(email);
+            response.addHeader("X-AUTH-TOKEN", token.getAccessToken());
+            response.addHeader("X-AUTH-REFRESH", token.getRefreshToken());
+            response.addHeader("X-AUTH-GRANT", token.getGrantType());
+
             return userService.getUserByEmail(email);
         }
 
@@ -56,8 +72,6 @@ public class UserController {
         UserCreateDto newUser = new UserCreateDto(nickname, 1, email, token.getRefreshToken());
         return userService.createUser(newUser);
     }
-
-
 
     @GetMapping("/email")
     public UserResponseDto getUserByEmail(@RequestParam String email) {
