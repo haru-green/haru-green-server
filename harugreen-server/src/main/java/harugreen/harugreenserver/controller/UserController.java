@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserService userService;
-    private final UserRepository userRepository;
     private final KakaoOAuthService kakaoOAuthService;
 
     /**
@@ -45,22 +44,16 @@ public class UserController {
 //        log.info("로그인 성공. nickname={}", profile.getNickName());
 //        log.info("로그인 성공. email={}", profile.getEmail());
 
-        if (userService.isExistUserByEmail(profile.getEmail())) {
-            //TODO: 가입된 유저인데 /user/login 에 진입했다 -> 토큰 만료
-            //TODO: jwt 재발급 필수
-            String tokenState = userService.validateJwt(request);
-            if (tokenState.equals("NOT_FOUND")) {
-                log.info("허용되지 않은 접근. 첫 창으로 리다이렉트.");
-
-            } else if (tokenState.equals("EXPIRED")) {
-                log.info("재로그인. ACCESS TOKEN 재발급 필요.");
+        if (userService.isExistUserByEmail(email)) {
+            //가입된 유저인데 /user/login 에 진입했다 -> 토큰 만료
+            //refresh token 확인하고 만료되었으면 재발급.
+            if (!userService.validateRefreshJwt(request)) {
+                JwtToken token = userService.generateToken(email);
+                response.addHeader("X-AUTH-TOKEN", token.getAccessToken());
+                response.addHeader("X-AUTH-REFRESH", token.getRefreshToken());
+                response.addHeader("X-AUTH-GRANT", token.getGrantType());
+                userService.setUserRefreshToken(email, token.getRefreshToken()); //refresh token 갱신
             }
-
-            JwtToken token = userService.generateToken(email);
-            response.addHeader("X-AUTH-TOKEN", token.getAccessToken());
-            response.addHeader("X-AUTH-REFRESH", token.getRefreshToken());
-            response.addHeader("X-AUTH-GRANT", token.getGrantType());
-
             return userService.getUserByEmail(email);
         }
 
@@ -75,7 +68,7 @@ public class UserController {
 
     @GetMapping("/email")
     public UserResponseDto getUserByEmail(@RequestParam String email) {
-        if(!userService.isExistUserByEmail(email)) {
+        if (!userService.isExistUserByEmail(email)) {
             return null;
         }
         return userService.getUserByEmail(email);
@@ -83,7 +76,7 @@ public class UserController {
 
     @PostMapping("/levelup/{email}")
     public UserResponseDto levelUp(@PathVariable String email) {
-        if(!userService.isExistUserByEmail(email)) {
+        if (!userService.isExistUserByEmail(email)) {
             return null;
         }
         return userService.levelUp(email);

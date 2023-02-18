@@ -52,6 +52,11 @@ public class UserService {
         return mapper.map(userRepository.save(newUser), UserResponseDto.class);
     }
 
+    public void setUserRefreshToken(String email, String refreshToken) {
+        User user = userRepository.findByEmail(email).get();
+        user.updateRefreshToken(refreshToken);
+    }
+
     /**
      * jwt 검증로직. /user/login 을 제외한 모든 API에 적용.
      */
@@ -62,7 +67,7 @@ public class UserService {
             return "NOT_FOUND";
         }
 
-        if(!jwtProvider.validateAccessToken(token)) {
+        if(!jwtProvider.validateToken(token)) {
             log.info("JWT ACCESS TOKEN EXPIRED (재발급 필요)");
             return "EXPIRED";
         }
@@ -71,8 +76,15 @@ public class UserService {
         return "VALIDATE";
     }
 
+     public boolean validateRefreshJwt(HttpServletRequest request) {
+        String refreshToken = jwtProvider.resolveRefreshToken(request);
+        return jwtProvider.validateToken(refreshToken);
+     }
+
     public boolean checkDuplicateUser(String email) {
         return userRepository.existsUserByEmail(email);
     }
+
+
 
 }
