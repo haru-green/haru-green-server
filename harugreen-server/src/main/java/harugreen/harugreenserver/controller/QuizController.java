@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuizController {
 
     private final QuizService quizService;
-    private final UserService userService;
     private final JwtProvider jwtProvider;
 
     @GetMapping

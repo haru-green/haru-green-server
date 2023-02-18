@@ -24,11 +24,4 @@ public class QuizInfo {
     private Integer level; //퀴즈의 레벨
     private Integer num; //퀴즈 번호
 
-//    @Builder
-//    public QuizInfo(String title, String commentary, Boolean ox, Integer level) {
-//        this.title = title;
-//        this.commentary = commentary;
-//        this.ox = ox;
-//        this.level = level;
-//    }
 }

@@ -73,15 +73,9 @@ public class JwtProvider {
         return request.getHeader("X-AUTH-REFRESH");
     }
 
-
-    public boolean validateAccessToken(String token) {
+    public boolean validateToken(String token) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
-            //TODO: access token 이 만료되었으면, refresh token 을 통해 재발급.
-            if(!claims.getBody().getExpiration().before(new Date())) {
-                //access token이 만료되었다면 재발급.
-
-            }
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;
