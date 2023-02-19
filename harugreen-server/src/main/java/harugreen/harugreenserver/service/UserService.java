@@ -43,10 +43,6 @@ public class UserService {
         return mapper.map(user, UserResponseDto.class);
     }
 
-    public JwtToken generateToken(String email) {
-        return jwtProvider.createToken(email);
-    }
-
     public UserResponseDto createUser(UserCreateDto user) {
         User newUser = user.toEntity();
         return mapper.map(userRepository.save(newUser), UserResponseDto.class);
@@ -56,30 +52,6 @@ public class UserService {
         User user = userRepository.findByEmail(email).get();
         user.updateRefreshToken(refreshToken);
     }
-
-    /**
-     * jwt 검증로직. /user/login 을 제외한 모든 API에 적용.
-     */
-    public String validateJwt(HttpServletRequest request) {
-        String token = jwtProvider.resolveAccessToken(request);
-        if (token == null) {
-            log.info("JWT ACCESS TOKEN INVALID (NOT FOUND)");
-            return "NOT_FOUND";
-        }
-
-        if(!jwtProvider.validateToken(token)) {
-            log.info("JWT ACCESS TOKEN EXPIRED (재발급 필요)");
-            return "EXPIRED";
-        }
-
-        log.info("JWT ACCESS TOKEN VALIDATE");
-        return "VALIDATE";
-    }
-
-     public boolean validateRefreshJwt(HttpServletRequest request) {
-        String refreshToken = jwtProvider.resolveRefreshToken(request);
-        return jwtProvider.validateToken(refreshToken);
-     }
 
     public boolean checkDuplicateUser(String email) {
         return userRepository.existsUserByEmail(email);
