@@ -73,9 +73,28 @@ public class JwtProvider {
         return request.getHeader("X-AUTH-REFRESH");
     }
 
-    public boolean validateToken(String token) {
+    public String validateAccessJwt(HttpServletRequest request) {
+        String token = resolveAccessToken(request);
+
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+
+            if(claims.getBody().getExpiration().before(new Date())) {
+                log.info("JWT ACCESS TOKEN EXPIRED (재발급 필요");
+                return "EXPIRED";
+            }
+            return "VALIDATE";
+        } catch (Exception e) {
+            return "NOT_FOUND";
+        }
+    }
+
+    public boolean validateRefreshJwt(HttpServletRequest request) {
+        String token = resolveRefreshToken(request);
+        log.info("resolve refresh token={}", token);
+        try {
+            Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
+            log.info("claim={}, {}", claims.getBody().getSubject(), claims.getBody().getExpiration());
             return !claims.getBody().getExpiration().before(new Date());
         } catch (Exception e) {
             return false;
