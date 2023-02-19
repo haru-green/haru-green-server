@@ -69,6 +69,18 @@ public class JwtProvider {
         return request.getHeader("X-AUTH-TOKEN");
     }
 
+    public String reGenerateAccessToken(String email) {
+        Claims claim = Jwts.claims().setSubject(email);
+        Date date = new Date();
+
+        return Jwts.builder()
+                .setClaims(claim)
+                .setIssuedAt(date)
+                .setExpiration(new Date(date.getTime() + accessTokenExpiredIn))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
     public String resolveRefreshToken(HttpServletRequest request) {
         return request.getHeader("X-AUTH-REFRESH");
     }

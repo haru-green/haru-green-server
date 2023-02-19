@@ -23,5 +23,4 @@ public class QuizInfo {
     private Boolean ox; //이 퀴즈의 정답이 O인지 X인지
     private Integer level; //퀴즈의 레벨
     private Integer num; //퀴즈 번호
-
 }
