@@ -1,20 +1,20 @@
 package harugreen.harugreenserver.service;
 
 import harugreen.harugreenserver.domain.QuizInfo;
-import harugreen.harugreenserver.dto.quiz.QuizCreateDto;
+import harugreen.harugreenserver.domain.User;
 import harugreen.harugreenserver.dto.quiz.QuizResponseDto;
+import harugreen.harugreenserver.dto.user.UserResponseDto;
 import harugreen.harugreenserver.repository.QuizInfoRepository;
+import harugreen.harugreenserver.repository.UserRepository;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.persistence.criteria.CriteriaBuilder.In;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,13 +23,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class QuizService {
 
     private final QuizInfoRepository quizRepository;
-    private final UserService userService; //service에서 다른 service를 호출하는 것이 맞나... 고찰...
+    private final UserRepository userRepository;
     private final ModelMapper mapper = new ModelMapper();
 
 
-
     @Transactional(readOnly = true)
-    public List<QuizResponseDto> getQuizListByLevel(Integer level) {
+    public List<QuizResponseDto> getQuizListByLevel(String email) {
+        User user = userRepository.findByEmail(email).get();
+        Integer level = user.getLevel();
+
         return quizRepository.findAll()
                 .stream()
                 .filter(q -> Objects.equals(q.getLevel(), level))
@@ -37,11 +39,36 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
-//    @Transactional(readOnly = true)
-//    public List<String> getAnswerByLevel(Integer level) {
-//        Optional<QuizInfo> answerList = quizRepository.findByLevel(level);
-//
-//    }
+    public UserResponseDto getAnswerByLevel(String email, Map<String, Boolean> submitList) {
+        User user = userRepository.findByEmail(email).get();
+        Integer level = user.getLevel();
+
+        List<QuizInfo> quizByLevel = quizRepository.findByLevel(level);
+        boolean ok = true;
+
+        for (QuizInfo quizInfo : quizByLevel) {
+            if (quizInfo.getNum() == 1) {
+                if(submitList.get("quiz1") != quizInfo.getOx()) {
+                    ok = false;
+                }
+            } else if (quizInfo.getNum() == 2) {
+                if(submitList.get("quiz2") != quizInfo.getOx()) {
+                    ok = false;
+                }
+            } else if (quizInfo.getNum() == 3) {
+                if(submitList.get("quiz3") != quizInfo.getOx()) {
+                    ok = false;
+                }
+            }
+        }
+
+        if(ok) {
+            log.info("LEVEL {} QUIZ 정답.", level);
+            user.setLevel(level + 1);
+        }
+
+        return mapper.map(user, UserResponseDto.class);
+    }
 
 
 }

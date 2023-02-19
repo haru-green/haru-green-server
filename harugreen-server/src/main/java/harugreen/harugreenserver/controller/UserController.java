@@ -52,12 +52,14 @@ public class UserController {
             if (!jwtProvider.validateRefreshJwt(request)) {
                 log.info("이미 가입된 유저. 토큰 만료, 재발급 실행");
                 JwtToken token = jwtProvider.createToken(email);
-                response.addHeader("X-AUTH-TOKEN", token.getAccessToken());
-                response.addHeader("X-AUTH-REFRESH", token.getRefreshToken());
-                response.addHeader("X-AUTH-GRANT", token.getGrantType());
+                response.setHeader("X-AUTH-TOKEN", token.getAccessToken());
+                response.setHeader("X-AUTH-REFRESH", token.getRefreshToken());
+                response.setHeader("X-AUTH-GRANT", token.getGrantType());
                 userService.setUserRefreshToken(email, token.getRefreshToken()); //refresh token 갱신
+            } else {
+                log.info("이미 가입된 유저. 토큰 유효. access token 재발급");
+                response.setHeader("X-AUTH-TOKEN", jwtProvider.reGenerateAccessToken(email));
             }
-            log.info("이미 가입된 유저. 토큰 유효.");
             return userService.getUserByEmail(email);
         }
 
