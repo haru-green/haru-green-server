@@ -18,8 +18,4 @@ public class AuthController {
         return "redirect:http://localhost:8080/user/login?code=" + code;
     }
 
-    @GetMapping("/test/healthcheck")
-    public String testCheck() {
-        return "ok";
-    }
 }

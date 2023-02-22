@@ -39,4 +39,5 @@ out/
 
 ### config
 src/main/resources/*.yml
+src/main/resources/application.yml
 
