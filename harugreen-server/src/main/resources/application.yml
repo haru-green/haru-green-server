@@ -9,11 +9,11 @@ spring:
         use_sql_comments: true
         dialect: org.hibernate.dialect.MySQL8Dialect
     hibernate:
-      ddl-auto: create
+      #ddl-auto: create
 
   profiles:
     include: oauth
 
 server:
-  address: http://3.38.182.135
+  address: localhost
   port: 8080
