@@ -15,7 +15,7 @@ public class AuthController {
     //여기서 다시 클라이언트 uri로 인가 코드를 담아서 보내준다.
     @GetMapping("/login/kakao")
     public String redirectToUserLogin(@RequestParam String code) {
-        return "redirect:http://3.38.182.135:8080/user/login?code=" + code;
+        return "redirect:http://43.201.16.105:8080/user/login?code=" + code;
     }
 
 }
