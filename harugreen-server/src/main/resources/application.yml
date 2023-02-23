@@ -15,5 +15,5 @@ spring:
     include: oauth
 
 server:
-  address: 172.31.13.69
+  address: 172.31.13.130
   port: 8080
