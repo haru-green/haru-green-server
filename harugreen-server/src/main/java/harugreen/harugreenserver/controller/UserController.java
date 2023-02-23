@@ -31,6 +31,11 @@ public class UserController {
     private final JwtProvider jwtProvider;
     private final KakaoOAuthService kakaoOAuthService;
 
+    @GetMapping("/test")
+    public String testCheck() {
+        return "ok";
+    }
+
     /**
      * 첫 로그인 시도 또는 검증 로직에 실패해 재로그인이 필요한 경우에만 호출.
      */

@@ -21,7 +21,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final JwtProvider jwtProvider;
     private final ModelMapper mapper = new ModelMapper();
 
     public boolean isExistUserByEmail(String email) {
@@ -52,11 +51,4 @@ public class UserService {
         User user = userRepository.findByEmail(email).get();
         user.updateRefreshToken(refreshToken);
     }
-
-    public boolean checkDuplicateUser(String email) {
-        return userRepository.existsUserByEmail(email);
-    }
-
-
-
 }
