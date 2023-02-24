@@ -20,7 +20,8 @@ public class HarugreenServerApplication {
 			public void addCorsMappings(CorsRegistry registry) {
 				registry.addMapping("/**")
 						.allowedOrigins("https://harugreen.vercel.app", "http://localhost:3000")
-						.allowedMethods("GET", "POST");
+						.allowedMethods("GET", "POST")
+						.allowCredentials(true);
 			}
 		};
 	}
