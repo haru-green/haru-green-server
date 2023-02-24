@@ -21,6 +21,7 @@ public class HarugreenServerApplication {
 				registry.addMapping("/**")
 						.allowedOrigins("https://harugreen.vercel.app", "http://localhost:3000")
 						.allowedMethods("GET", "POST")
+						.exposedHeaders("*")
 						.allowCredentials(true);
 			}
 		};
