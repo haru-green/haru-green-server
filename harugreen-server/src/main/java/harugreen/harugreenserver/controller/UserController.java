@@ -79,13 +79,10 @@ public class UserController {
         return userService.createUser(newUser);
     }
 
-    @GetMapping("/email")
-    public UserResponseDto getUserByEmail(@RequestParam String email) {
-
-        if (!userService.isExistUserByEmail(email)) {
-            return null;
-        }
-        return userService.getUserByEmail(email);
+    @GetMapping("/get")
+    public UserResponseDto getUser(HttpServletRequest request, HttpServletResponse response) {
+        String refreshToken = request.getHeader("X-AUTH-REFRESH");
+        return userService.getUserByRefreshToken(refreshToken);
     }
 
     @PostMapping("/levelup/{email}")

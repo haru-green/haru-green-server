@@ -7,6 +7,8 @@ import harugreen.harugreenserver.dto.user.JwtResponseDto;
 import harugreen.harugreenserver.dto.user.UserCreateDto;
 import harugreen.harugreenserver.dto.user.UserResponseDto;
 import harugreen.harugreenserver.repository.UserRepository;
+import java.util.List;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +32,14 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserResponseDto getUserByEmail(String email) {
         User user = userRepository.findByEmail(email).get();
+        return mapper.map(user, UserResponseDto.class);
+    }
+
+    @Transactional(readOnly = true)
+    public UserResponseDto getUserByRefreshToken(String token) {
+        Optional<List<User>> allByRefreshToken = userRepository.findAllByRefreshToken(token);
+        User user = allByRefreshToken.get().get(0);
+
         return mapper.map(user, UserResponseDto.class);
     }
 
