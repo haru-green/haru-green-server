@@ -8,7 +8,6 @@ import harugreen.harugreenserver.config.oauth2.kakao.dto.UserInfoResponse;
 import harugreen.harugreenserver.config.oauth2.kakao.service.KakaoOAuthService;
 import harugreen.harugreenserver.dto.user.UserCreateDto;
 import harugreen.harugreenserver.dto.user.UserResponseDto;
-import harugreen.harugreenserver.repository.UserRepository;
 import harugreen.harugreenserver.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -81,7 +80,9 @@ public class UserController {
 
     @GetMapping("/get")
     public UserResponseDto getUser(HttpServletRequest request, HttpServletResponse response) {
+        log.info("유저 정보 요청.");
         String refreshToken = request.getHeader("X-AUTH-REFRESH");
+        log.info("refreshToken={}", refreshToken);
         return userService.getUserByRefreshToken(refreshToken);
     }
 
