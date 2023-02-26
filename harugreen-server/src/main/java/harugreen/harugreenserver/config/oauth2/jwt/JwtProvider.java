@@ -87,7 +87,7 @@ public class JwtProvider {
 
     public String validateAccessJwt(HttpServletRequest request) {
         String token = resolveAccessToken(request);
-
+        log.info("ACCESS TOKEN 검증 시작. token={}", token);
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 

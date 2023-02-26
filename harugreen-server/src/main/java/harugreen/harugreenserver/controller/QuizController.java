@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://harugreen.vercel.app, http://localhost:3000", allowedHeaders = "*")
 @RequestMapping("/quiz")
 public class QuizController {
 
@@ -35,6 +34,7 @@ public class QuizController {
     @ResponseBody
     public List<QuizResponseDto> getQuizList(@RequestParam String email, HttpServletRequest request,
             HttpServletResponse response) {
+        log.info("getQuizList. request email={}", email);
         if (userService.isExistUserByEmail(email)) {
             if (tokenStateValidate(email, request, response)) {
                 return null;
@@ -60,6 +60,7 @@ public class QuizController {
     @GetMapping("/answer")
     @ResponseBody
     public List<QuizResponseDto> getAnswerList(@RequestParam String email, HttpServletRequest request, HttpServletResponse response) {
+        log.info("getAnswerList. request email={}", email);
         if (userService.isExistUserByEmail(email)) {
             if (tokenStateValidate(email, request, response)) {
                 return null;
