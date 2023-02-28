@@ -48,24 +48,24 @@ public class QuizService {
 
         for (QuizInfo quizInfo : quizByLevel) {
             if (quizInfo.getNum() == 1) {
-                if(submitList.get("quiz1") != quizInfo.getOx()) {
+                if (submitList.get("quiz1") != quizInfo.getOx()) {
                     ok = false;
                 }
             } else if (quizInfo.getNum() == 2) {
-                if(submitList.get("quiz2") != quizInfo.getOx()) {
+                if (submitList.get("quiz2") != quizInfo.getOx()) {
                     ok = false;
                 }
             } else if (quizInfo.getNum() == 3) {
-                if(submitList.get("quiz3") != quizInfo.getOx()) {
+                if (submitList.get("quiz3") != quizInfo.getOx()) {
                     ok = false;
                 }
             }
         }
 
-        if(ok) {
-            log.info("LEVEL {} QUIZ 정답.", level);
+        if (ok) {
             user.updateAnswerTime();
             user.setLevel(level + 1);
+            log.info("LEVEL {} QUIZ 정답.", level);
         }
 
         return mapper.map(user, UserResponseDto.class);

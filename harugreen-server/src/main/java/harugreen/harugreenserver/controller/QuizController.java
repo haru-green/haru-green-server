@@ -45,7 +45,8 @@ public class QuizController {
     }
 
     @PostMapping("/try")
-    public UserResponseDto tryQuiz(@RequestBody HashMap<String, Boolean> quiz, @RequestParam String email, HttpServletRequest request, HttpServletResponse response) {
+    public UserResponseDto tryQuiz(@RequestBody HashMap<String, Boolean> quiz, @RequestParam String email,
+            HttpServletRequest request, HttpServletResponse response) {
         if (userService.isExistUserByEmail(email)) {
             if (tokenStateValidate(email, request, response)) {
                 return null;
@@ -62,7 +63,8 @@ public class QuizController {
 
     @GetMapping("/answer")
     @ResponseBody
-    public List<QuizResponseDto> getAnswerList(@RequestParam String email, HttpServletRequest request, HttpServletResponse response) {
+    public List<QuizResponseDto> getAnswerList(@RequestParam String email, HttpServletRequest request,
+            HttpServletResponse response) {
         log.info("getAnswerList. request email={}", email);
         if (userService.isExistUserByEmail(email)) {
             if (tokenStateValidate(email, request, response)) {
