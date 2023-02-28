@@ -64,6 +64,7 @@ public class QuizService {
 
         if(ok) {
             log.info("LEVEL {} QUIZ 정답.", level);
+            user.updateAnswerTime();
             user.setLevel(level + 1);
         }
 
