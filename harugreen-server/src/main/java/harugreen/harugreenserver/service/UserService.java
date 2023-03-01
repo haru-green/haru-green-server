@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtProvider jwtProvider;
     private final ModelMapper mapper = new ModelMapper();
 
     public boolean isExistUserByEmail(String email) {
@@ -37,9 +38,8 @@ public class UserService {
 
     @Transactional(readOnly = true)
     public UserResponseDto getUserByRefreshToken(String token) {
-        Optional<List<User>> allByRefreshToken = userRepository.findAllByRefreshToken(token);
-        User user = allByRefreshToken.get().get(0);
-
+        String email = jwtProvider.getUserEmailByDecodedJwt(token);
+        User user = userRepository.findByEmail(email).get();
         return mapper.map(user, UserResponseDto.class);
     }
 
