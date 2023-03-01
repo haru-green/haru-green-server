@@ -60,13 +60,13 @@ public class JwtProvider {
 
     //access token 복호화를 통한 유저 이메일 파싱
     public String getUserEmailByDecodedJwt(String accessToken) {
+        Claims claims = null;
         try {
-            return Jwts.parserBuilder()
+            claims = Jwts.parserBuilder()
                     .setSigningKey(Keys.hmacShaKeyFor(key.getEncoded()))
                     .build()
                     .parseClaimsJws(accessToken)
-                    .getBody()
-                    .getSubject();
+                    .getBody();
         } catch (SecurityException e) {
             log.info("Invalid JWT signature.");
         } catch (MalformedJwtException e) {
@@ -78,6 +78,7 @@ public class JwtProvider {
         } catch (IllegalArgumentException e) {
             log.info("JWT token compact of handler are invalid.");
         }
+        return claims.getSubject();
     }
 
     public String resolveAccessToken(HttpServletRequest request) {
@@ -106,7 +107,7 @@ public class JwtProvider {
         try {
             Jws<Claims> claims = Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
 
-            if(claims.getBody().getExpiration().before(new Date())) {
+            if (claims.getBody().getExpiration().before(new Date())) {
                 log.info("JWT ACCESS TOKEN EXPIRED (재발급 필요");
                 return "EXPIRED";
             }
