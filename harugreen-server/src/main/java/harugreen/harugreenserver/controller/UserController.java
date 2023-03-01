@@ -79,9 +79,9 @@ public class UserController {
     @GetMapping("/get")
     public UserResponseDto getUser(HttpServletRequest request, HttpServletResponse response) {
         log.info("유저 정보 요청.");
-        String refreshToken = request.getHeader("X-AUTH-REFRESH");
-        log.info("refreshToken={}", refreshToken);
-        return userService.getUserByRefreshToken(refreshToken);
+        String accessToken = request.getHeader("X-AUTH-TOKEN");
+        log.info("accessToken={}", accessToken);
+        return userService.getUserByRefreshToken(accessToken);
     }
 
     @PostMapping("/levelup/{email}")
