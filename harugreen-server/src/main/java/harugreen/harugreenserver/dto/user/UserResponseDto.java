@@ -1,5 +1,6 @@
 package harugreen.harugreenserver.dto.user;
 
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,4 +16,5 @@ public class UserResponseDto {
     private Integer level;
     private String email;
     private String refreshToken;
+    private LocalDateTime answerTime;
 }

@@ -8,13 +8,11 @@ import harugreen.harugreenserver.config.oauth2.kakao.dto.UserInfoResponse;
 import harugreen.harugreenserver.config.oauth2.kakao.service.KakaoOAuthService;
 import harugreen.harugreenserver.dto.user.UserCreateDto;
 import harugreen.harugreenserver.dto.user.UserResponseDto;
-import harugreen.harugreenserver.repository.UserRepository;
 import harugreen.harugreenserver.service.UserService;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,7 +23,6 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@CrossOrigin(origins = "https://harugreen.vercel.app, http://localhost:3000", allowedHeaders = "*")
 @RequestMapping("/user")
 public class UserController {
 
@@ -79,13 +76,12 @@ public class UserController {
         return userService.createUser(newUser);
     }
 
-    @GetMapping("/email")
-    public UserResponseDto getUserByEmail(@RequestParam String email) {
-
-        if (!userService.isExistUserByEmail(email)) {
-            return null;
-        }
-        return userService.getUserByEmail(email);
+    @GetMapping("/get")
+    public UserResponseDto getUser(HttpServletRequest request, HttpServletResponse response) {
+        log.info("유저 정보 요청.");
+        String accessToken = request.getHeader("X-AUTH-TOKEN");
+        log.info("accessToken={}", accessToken);
+        return userService.getUserByRefreshToken(accessToken);
     }
 
     @PostMapping("/levelup/{email}")
